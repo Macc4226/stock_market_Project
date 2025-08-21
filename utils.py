@@ -1,4 +1,3 @@
-# Utility functions for the Streamlit application
 import streamlit as st
 import requests
 import pandas as pd
@@ -14,7 +13,7 @@ class StockData:
             "x-rapidapi-key": api_key,
             "x-rapidapi-host": "alpha-vantage.p.rapidapi.com",
         }
-
+    @st.cache_data(ttl=3600)
     def symbol_search(self, company: str):
         querystring = {
             "datatype": "json",
@@ -26,6 +25,7 @@ class StockData:
         search_df = pd.DataFrame(search)
         return search_df
 
+    @st.cache_data(ttl=3600)
     def get_daily_data(self, symbol: str):
         querystring = {
             "function": "TIME_SERIES_DAILY",
@@ -55,10 +55,3 @@ class StockData:
         )
         fig.update_layout(width=1200, height=800)
         return fig
-
-if __name__ == "__main__":
-    client = StockData()
-    search = client.symbol_search(company="Adani")
-    print(search)
-    df = client.get_daily_data(symbol="ADANIPORTS.BSE")
-    print(df.head())
